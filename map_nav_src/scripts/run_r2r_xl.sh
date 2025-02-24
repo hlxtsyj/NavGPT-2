@@ -1,3 +1,10 @@
+source /usr/local/anaconda3/bin/activate navgpt
+source "$(dirname $(readlink -f "$0"))/.env_vars" 
+echo $PYTHONPATH
+
+
+GPUS=$1
+
 DATA_ROOT=../datasets
 
 train_alg=dagger
@@ -52,13 +59,13 @@ flag="--root_dir ${DATA_ROOT}
       --gamma 0."
 
 # train
-CUDA_VISIBLE_DEVICES='0' python r2r/main_nav.py $flag  \
+CUDA_VISIBLE_DEVICES=$GPUS python r2r/main_nav.py $flag  \
         --freeze_qformer \
         --aug ../datasets/R2R/annotations/prevalent_aug.json \
         --qformer_ckpt_path models/lavis/output/NavGPT-InstructBLIP-FlanT5XL.pth   # replace with the path to the pretrained qformer
 
 # test
-CUDA_VISIBLE_DEVICES='0' python r2r/main_nav.py $flag  \
+CUDA_VISIBLE_DEVICES=$GPUS python r2r/main_nav.py $flag  \
         --test --submit \
         --freeze_qformer \
         --qformer_ckpt_path models/lavis/output/NavGPT-InstructBLIP-FlanT5XL.pth \
