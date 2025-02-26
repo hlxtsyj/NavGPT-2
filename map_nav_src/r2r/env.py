@@ -9,6 +9,7 @@ import random
 import networkx as nx
 from collections import defaultdict
 import copy
+import requests
 
 import MatterSim
 
@@ -84,6 +85,7 @@ class R2RNavBatch(object):
     def __init__(
         self, view_db, instr_data, connectivity_dir, candidate_file_dir,
         batch_size=64, angle_feat_size=4, seed=0, name=None, sel_data_idxs=None,
+        real_world=False, server_path=None
     ):
         self.env = EnvBatch(connectivity_dir, feat_db=view_db, batch_size=batch_size)
         self.data = instr_data
@@ -93,37 +95,44 @@ class R2RNavBatch(object):
         self.angle_feat_size = angle_feat_size
         self.name = name
 
-        self.gt_trajs = self._get_gt_trajs(self.data) # for evaluation
+        self.real_world = real_world
+        self.server_path = server_path
 
-        # in validation, we would split the data
-        if sel_data_idxs is not None:
-            t_split, n_splits = sel_data_idxs
-            ndata_per_split = len(self.data) // n_splits 
-            start_idx = ndata_per_split * t_split
-            if t_split == n_splits - 1:
-                end_idx = None
-            else:
-                end_idx = start_idx + ndata_per_split
-            self.data = self.data[start_idx: end_idx]
+        if not self.real_world:
 
-        # use different seeds in different processes to shuffle data
-        self.seed = seed
-        random.seed(self.seed)
-        random.shuffle(self.data)
+            self.gt_trajs = self._get_gt_trajs(self.data) # for evaluation
 
-        self.ix = 0
-        self._load_nav_graphs()
+            # in validation, we would split the data
+            if sel_data_idxs is not None:
+                t_split, n_splits = sel_data_idxs
+                ndata_per_split = len(self.data) // n_splits 
+                start_idx = ndata_per_split * t_split
+                if t_split == n_splits - 1:
+                    end_idx = None
+                else:
+                    end_idx = start_idx + ndata_per_split
+                self.data = self.data[start_idx: end_idx]
 
-        self.candidates_dict = json.load(open(candidate_file_dir, 'r'))
-        
-        print('%s loaded with %d instructions, using splits: %s' % (
-            self.__class__.__name__, len(self.data), self.name))
+            # use different seeds in different processes to shuffle data
+            self.seed = seed
+            random.seed(self.seed)
+            random.shuffle(self.data)
+
+            self.ix = 0
+            self._load_nav_graphs()
+
+            self.candidates_dict = json.load(open(candidate_file_dir, 'r'))
+
+            print('%s loaded with %d instructions, using splits: %s' % (
+                self.__class__.__name__, len(self.data), self.name))
 
     def _get_gt_trajs(self, data):
         # gt_trajs = {
         #     x['instr_id']: (x['scan'], x['path']) \
         #         for x in data if len(x['path']) > 1
         # }
+        if self.real_world:
+            return {}
         gt_trajs = {
             x['instr_id']: (x['scan'], x['path'], x.get('objId')) for x in data
         }
@@ -141,6 +150,8 @@ class R2RNavBatch(object):
         Load connectivity graph for each scan, useful for reasoning about shortest paths
         :return: None
         """
+        if self.real_world:
+            return
         print('Loading navigation graphs for %d scans' % len(self.scans))
         self.graphs = load_nav_graphs(self.connectivity_dir, self.scans)
         self.shortest_paths = {}
@@ -154,8 +165,11 @@ class R2RNavBatch(object):
         """
         Store the minibach in 'self.batch'
         """
+        
         if batch_size is None:
             batch_size = self.batch_size
+        if self.real_world:
+            batch_size = 1
         
         batch = self.data[self.ix: self.ix+batch_size]
         if len(batch) < batch_size:
@@ -173,6 +187,8 @@ class R2RNavBatch(object):
             random.shuffle(self.data)
         self.ix = 0
 
+
+# skcjvhdkfjvhjozfdi;bjh;kzfelvj;bozgjob
     def make_candidate(self, feature, scanId, viewpointId, viewId):
         '''
         Make candidate list for the current state.
@@ -208,6 +224,8 @@ class R2RNavBatch(object):
         return candidate_new
 
     def _get_obs(self):
+        if self.real_world:
+            passf
         obs = []
         for i, (feature, state) in enumerate(self.env.getStates()):
             item = self.batch[i]

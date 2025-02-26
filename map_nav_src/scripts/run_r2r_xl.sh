@@ -59,10 +59,10 @@ flag="--root_dir ${DATA_ROOT}
       --gamma 0."
 
 # train
-CUDA_VISIBLE_DEVICES=$GPUS python r2r/main_nav.py $flag  \
-        --freeze_qformer \
-        --aug ../datasets/R2R/annotations/prevalent_aug.json \
-        --qformer_ckpt_path models/lavis/output/NavGPT-InstructBLIP-FlanT5XL.pth   # replace with the path to the pretrained qformer
+# CUDA_VISIBLE_DEVICES=$GPUS python r2r/main_nav.py $flag  \
+#         --freeze_qformer \
+#         --aug ../datasets/R2R/annotations/prevalent_aug.json \
+#         --qformer_ckpt_path models/lavis/output/NavGPT-InstructBLIP-FlanT5XL.pth   # replace with the path to the pretrained qformer
 
 # test
 CUDA_VISIBLE_DEVICES=$GPUS python r2r/main_nav.py $flag  \
