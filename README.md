@@ -34,10 +34,10 @@
 
 ## 🍻 TODOs
 
-- [x] Release 🎇NavGPT-2 policy finetuning code.
-- [x] Release visual instruction tuning code.
-- [x] Release navigational reasoning data.
-- [x] Release pretrained models weights.
+- [X] Release 🎇NavGPT-2 policy finetuning code.
+- [X] Release visual instruction tuning code.
+- [X] Release navigational reasoning data.
+- [X] Release pretrained models weights.
 - [ ] Release data preparation scripts.
 
 ## 🧋 Prerequisites
@@ -47,6 +47,7 @@
 Two ways are provided to set up the environment: Conda and Docker, can choose either one according to your preference.
 
 #### Conda Environment
+
 1. Create a conda environment and install all dependencies:
 
 ```bash
@@ -57,7 +58,7 @@ pip install -r requirements.txt
 
 2. Install Matterport3D simulator follow instructions [here](https://github.com/peteanderson80/Matterport3DSimulator).
 
-    You could find some hints from the provided [Dockerfile](dockerfile) of how to build the simulator in conda environment :) .
+   You could find some hints from the provided [Dockerfile](dockerfile) of how to build the simulator in conda environment :) .
 
 #### Docker Environment
 
@@ -71,6 +72,7 @@ docker run -it gengzezhou/mattersim-torch2.2.0cu118:v2 /bin/bash
 ```
 
 Start a container and run the following lines to make sure you activate the environment:
+
 ```bash
 source /root/miniconda3/etc/profile.d/conda.s
 conda activate
@@ -96,15 +98,14 @@ This script will automatically download the following datasets:
 
 1. R2R Data and Pre-computed Image Features ([EVA-CLIP-g](https://github.com/salesforce/LAVIS/blob/ac8fc98c93c02e2dfb727e24a361c4c309c8dbbc/lavis/models/eva_vit.py#L442)):
 
-    Source: [Huggingface Datasets: ZGZzz/NavGPT-R2R](https://huggingface.co/datasets/ZGZzz/NavGPT-R2R)
+   Source: [Huggingface Datasets: ZGZzz/NavGPT-R2R](https://huggingface.co/datasets/ZGZzz/NavGPT-R2R)
 
-    Destination: `datasets`
-
+   Destination: `datasets`
 2. Instruction Tuning Data for NavGPT-2:
 
-    Source: [Huggingface Datasets: ZGZzz/NavGPT-Instruct](https://huggingface.co/datasets/ZGZzz/NavGPT-Instruct)
+   Source: [Huggingface Datasets: ZGZzz/NavGPT-Instruct](https://huggingface.co/datasets/ZGZzz/NavGPT-Instruct)
 
-    Destination: `datasets/NavGPT-Instruct`
+   Destination: `datasets/NavGPT-Instruct`
 
 Unzip the downloaded R2R data:
 
@@ -164,7 +165,6 @@ This script will automatically download the following pretrained models:
 The checkpoints include the following files:
 
 1. Pretrained NavGPT-2 Q-former weights, will be put in the `map_nav_src/models/lavis/output` directory.
-
 2. Finetuned NavGPT-2 policy weights, will be put in the `datasets/R2R/trained_models` directory.
 
 Alternatively, you can specify the models to download by providing the `--model` argument to the script. For example, to download only the NavGPT2-FlanT5-XL weights:
@@ -227,6 +227,7 @@ bash scripts/run_r2r_vicuna13b.sh
 ```
 
 ## 🥂 Acknowledgements
+
 We extend our gratitude to MatterPort 3D for their valuable contributions to the open-source platform and community.
 
 We also acknowledge the significant benefits of using [DUET](https://github.com/cshizhe/VLN-DUET) and [InstructBLIP](https://github.com/salesforce/LAVIS/tree/main/projects/instructblip) in this work. Our thanks go out to the creators of these outstanding projects.
